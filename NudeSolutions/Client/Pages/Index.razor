@@ -1,0 +1,64 @@
+﻿@page "/"
+@using NudeSolutions.Shared
+@inject HttpClient Http
+
+<div class="container">
+
+    <table class="table">
+        <tbody>
+
+            <tr>
+                <td><input type="text" class="form-control" id="status" rows="3" @bind="Name" placeholder="Name" /></td>
+                <td><input type="number" class="form-control" id="value" rows="3" @bind="Value" placeholder="Value" /></td>
+                <td>
+                    <select class="form-control" id="category" rows="3" @bind="Category">
+                        <option value="General">General</option>
+                        <option value="Electronics">Electronics</option>
+                        <option value="Kitchen">Kitchen</option>
+                        <option value="Clothing">Clothing</option>
+                    </select>
+                </td>
+                <td><button class="btn btn-primary" @onclick="AddItem">Add Item</button></td>
+            </tr>
+
+        </tbody>
+    </table>
+    @if (Items.Count == 0)
+    {
+        <p><em>No Items Added Yet</em></p>
+    }
+    else
+    {
+        @foreach (var category in Items.GroupBy(x => x?.CategoryName))
+        {
+            <ul>
+                <li>@category?.Key @SumByCategory(category?.Key)</li>
+
+                <ul>
+                    @foreach (var item in Items.Where(x => x.CategoryName.Equals(category?.Key)))
+                    {
+                        <li>
+                            <div class="row mb-2">
+                                <div class="col">
+                                    <label>@item.Name</label>
+                                </div>
+                                <div class="col">
+                                    <label>@item.Value</label>
+                                </div>
+                                <div class="col">
+                                    <button class="btn btn-danger" @onclick="() => DeleteItem(item.ItemId)">Delete</button>
+                                </div>
+                            </div>
+                        </li>
+                    }
+                </ul>
+            </ul>
+        }
+
+
+        <div class="row">
+            <div class="col"><label>Total: @Sum()</label></div>
+        </div>
+
+    }
+</div>
